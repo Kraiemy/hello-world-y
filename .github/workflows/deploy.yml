@@ -1,4 +1,4 @@
-name: Deploy to Tomcat
+name: Deploy to Tomcat in Docker
 
 on:
   push:
@@ -16,14 +16,11 @@ jobs:
           java-version: '11'
       - name: Build with Maven
         run: mvn -B package --file pom.xml
-      - name: Deploy to Tomcat
+      - name: Deploy to Tomcat in Docker
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.172.19.1.220:8086}}
-          username: ${{ secrets.admin }}
-          password: ${{ secrets.admin }}
+          host: ${{ secrets.172.19.1.220 }}
+          username: ${{ secrets.root }}
+          password: ${{ secrets.vagrant }}
           script: |
-            cd /usr/local/tomcat/webapps
-            rm -rf ROOT
-            cp /path/to/your/war/file ROOT.war
-            sudo systemctl restart tomcat
+            docker cp target/webapp.war tom1:/usr/local/tomcat/webapps/ROOT.war
